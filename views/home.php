@@ -173,11 +173,10 @@
                 $.ajax({
                     url: '/tasks/update',
                     method: 'GET',
-                    dataType: 'json',
                     success: function (data) {
                         console.log('AJAX response data:', data);
-                        if (data.status === 200 && Array.isArray(data.data)) {
-                            alflTasks = data.data;
+                        if (data) {
+                            allTasks = data;
                             updateTable(allTasks);
                         } else {
                             console.error('Failed to fetch tasks:', data);
@@ -195,9 +194,9 @@
 
             setTimeout(function () {
                 fetchTasks(); // Initial fetch of tasks
-                setInterval(fetchTasks, 60000); // Repeat fetch every 60 seconds
-            }, 60000);
-            
+                setInterval(fetchTasks, 10000); // Repeat fetch every 60 seconds
+            }, 10000);
+
             $('#default-search').on('input', function() {
                  const query = $(this).val();
                  searchTasks(query);
