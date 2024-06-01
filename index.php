@@ -24,8 +24,6 @@ $routes = [
     'tasks/update' => 'getTasks',
 ];
 
-
-
 // Route handling
 if (array_key_exists($requestUri, $routes)) {
     $method = $routes[$requestUri];
