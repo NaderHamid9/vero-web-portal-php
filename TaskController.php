@@ -43,40 +43,38 @@ class TaskController {
     }
 
     public function index() {
-        $tasksResponse = $this->getTasks();
-    
+        $tasksResponse = $this->getTasks(false);
+
         // Decode the JSON response
         $tasksData = json_decode($tasksResponse, true);
-    
-        // Check if decoding was successful and if the status is 200
+
+        // Check if decoding successful
         if ($tasksData && isset($tasksData['status']) && $tasksData['status'] == 200) {
             // Extract the tasks data
             $tasks = $tasksData['data'];
 
-            // Now you can use $tasks as an array
             require 'views/home.php';
         } 
     }
-    
 
-    public function getTasks() {
+    public function getTasks($isAjax = true) {
         $taskApiUrl = $this->config['task_api_url'];
         $loginResult = $this->login();
-    
+
         if (isset($loginResult['access_token'])) {
             $accessToken = $loginResult['access_token'];
-    
+
             $ch = curl_init($taskApiUrl);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_HTTPHEADER, [
                 'Authorization: Bearer ' . $accessToken
             ]);
-    
+
             $response = curl_exec($ch);
             curl_close($ch);
-    
+
             $tasks = json_decode($response, true);
-    
+
             if ($tasks) {
                 // Encode the tasks data as JSON
                 $responseData = json_encode(['status' => 200, 'data' => $tasks]);
@@ -86,15 +84,18 @@ class TaskController {
         } else {
             $responseData = json_encode(['status' => 500, 'data' => $loginResult]);
         }
-    
-        // Return JSON response
-        // header('Content-Type: application/json');
-            
-        echo $responseData;
+
+        // Check if the request is Ajax
+        if ($isAjax && $this->isAjaxRequest()) {
+            header('Content-Type: application/json');
+            echo $responseData;
+        }
+
         return $responseData;
     }
-    
-    
-    
+
+    // this function checks if request is ajax
+    private function isAjaxRequest() {
+        return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+    }
 }
-?>

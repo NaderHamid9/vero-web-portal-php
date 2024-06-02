@@ -12,19 +12,19 @@ $config = [
 
 $controller = new TaskController($config);
 
-// Normalize the request URI
+//Normalize the request URI
 $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $requestUri = trim($requestUri, '/');
 
 
-// Define routes
+//Routes
 $routes = [
     '' => 'index',
     'index' => 'index',
     'tasks/update' => 'getTasks',
 ];
 
-// Route handling
+//Route handling
 if (array_key_exists($requestUri, $routes)) {
     $method = $routes[$requestUri];
 
